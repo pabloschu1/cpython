@@ -1934,6 +1934,12 @@ class TestAddSubparsers(TestCase):
         subparsers.add_parser('run')
         self._test_required_subparsers(parser)
 
+    def test_required_subparsers_no_destination_error(self):
+        parser = ErrorRaisingArgumentParser()
+        subparsers = parser.add_subparsers()
+        subparsers.add_parser('run')
+        self.assertArgumentParserError(parser.parse_args, ())
+
     def test_optional_subparsers(self):
         parser = ErrorRaisingArgumentParser()
         subparsers = parser.add_subparsers(dest='command', required=False)
