@@ -44,7 +44,7 @@ __all__ = ["pprint","pformat","isreadable","isrecursive","saferepr",
            "PrettyPrinter", "pp"]
 
 
-def pprint(object, stream=None, indent=1, width=80, depth=None, *,
+def pprint(object, stream=None, indent=4, width=80, depth=None, *,
            compact=False, sort_dicts=True):
     """Pretty-print a Python object to a stream [default is sys.stdout]."""
     printer = PrettyPrinter(
@@ -52,7 +52,7 @@ def pprint(object, stream=None, indent=1, width=80, depth=None, *,
         compact=compact, sort_dicts=sort_dicts)
     printer.pprint(object)
 
-def pformat(object, indent=1, width=80, depth=None, *,
+def pformat(object, indent=4, width=80, depth=None, *,
             compact=False, sort_dicts=True):
     """Format a Python object into a pretty-printed representation."""
     return PrettyPrinter(indent=indent, width=width, depth=depth,
@@ -101,7 +101,7 @@ def _safe_tuple(t):
     return _safe_key(t[0]), _safe_key(t[1])
 
 class PrettyPrinter:
-    def __init__(self, indent=1, width=80, depth=None, stream=None, *,
+    def __init__(self, indent=4, width=80, depth=None, stream=None, *,
                  compact=False, sort_dicts=True):
         """Handle pretty printing operations onto a stream using a set of
         configured parameters.
@@ -188,9 +188,7 @@ class PrettyPrinter:
 
     def _pprint_dict(self, object, stream, indent, allowance, context, level):
         write = stream.write
-        write('{')
-        if self._indent_per_level > 1:
-            write((self._indent_per_level - 1) * ' ')
+        write('{\n')
         length = len(object)
         if length:
             if self._sort_dicts:
@@ -217,7 +215,7 @@ class PrettyPrinter:
     _dispatch[_collections.OrderedDict.__repr__] = _pprint_ordered_dict
 
     def _pprint_list(self, object, stream, indent, allowance, context, level):
-        stream.write('[')
+        stream.write('[\n')
         self._format_items(object, stream, indent, allowance + 1,
                            context, level)
         stream.write(']')
@@ -373,24 +371,21 @@ class PrettyPrinter:
                            level):
         write = stream.write
         indent += self._indent_per_level
-        delimnl = ',\n' + ' ' * indent
         last_index = len(items) - 1
         for i, (key, ent) in enumerate(items):
             last = i == last_index
+            write(indent * ' ')
             rep = self._repr(key, context, level)
             write(rep)
             write(': ')
             self._format(ent, stream, indent + len(rep) + 2,
                          allowance if last else 1,
                          context, level)
-            if not last:
-                write(delimnl)
+            write(',\n')
 
     def _format_items(self, items, stream, indent, allowance, context, level):
         write = stream.write
         indent += self._indent_per_level
-        if self._indent_per_level > 1:
-            write((self._indent_per_level - 1) * ' ')
         delimnl = ',\n' + ' ' * indent
         delim = ''
         width = max_width = self._width - indent + 1

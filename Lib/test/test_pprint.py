@@ -197,29 +197,31 @@ class QueryTestCase(unittest.TestCase):
              'read_io_runtime_us': 0,
              'write_io_runtime_us': 43690}
         exp = """\
-{'RPM_cal': 0,
- 'RPM_cal2': 48059,
- 'Speed_cal': 0,
- 'controldesk_runtime_us': 0,
- 'main_code_runtime_us': 0,
- 'read_io_runtime_us': 0,
- 'write_io_runtime_us': 43690}"""
+{
+    'RPM_cal': 0,
+    'RPM_cal2': 48059,
+    'Speed_cal': 0,
+    'controldesk_runtime_us': 0,
+    'main_code_runtime_us': 0,
+    'read_io_runtime_us': 0,
+    'write_io_runtime_us': 43690,
+}"""
         for type in [dict, dict2]:
             self.assertEqual(pprint.pformat(type(o)), exp)
 
         o = range(100)
-        exp = '[%s]' % ',\n '.join(map(str, o))
+        exp = '[\n    %s,\n]' % ',\n    '.join(map(str, o))
         for type in [list, list2]:
             self.assertEqual(pprint.pformat(type(o)), exp)
 
         o = tuple(range(100))
-        exp = '(%s)' % ',\n '.join(map(str, o))
+        exp = '(\n    %s,\n)' % ',\n    '.join(map(str, o))
         for type in [tuple, tuple2]:
             self.assertEqual(pprint.pformat(type(o)), exp)
 
         # indent parameter
         o = range(100)
-        exp = '[   %s]' % ',\n    '.join(map(str, o))
+        exp = '[\n    %s,\n]' % ',\n    '.join(map(str, o))
         for type in [list, list2]:
             self.assertEqual(pprint.pformat(type(o), indent=4), exp)
 
@@ -228,14 +230,20 @@ class QueryTestCase(unittest.TestCase):
         o2 = dict(first=1, second=2, third=3)
         o = [o1, o2]
         expected = """\
-[   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    {'first': 1, 'second': 2, 'third': 3}]"""
+[
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    {'first': 1, 'second': 2, 'third': 3},\n
+]"""
         self.assertEqual(pprint.pformat(o, indent=4, width=42), expected)
         expected = """\
-[   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    {   'first': 1,
+[
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    {
+        'first': 1,
         'second': 2,
-        'third': 3}]"""
+        'third': 3,
+    },
+]"""
         self.assertEqual(pprint.pformat(o, indent=4, width=41), expected)
 
     def test_width(self):
