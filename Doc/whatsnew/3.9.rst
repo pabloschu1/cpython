@@ -152,6 +152,9 @@ Add :func:`curses.get_escdelay`, :func:`curses.set_escdelay`,
 :func:`curses.get_tabsize`, and :func:`curses.set_tabsize` functions.
 (Contributed by Anthony Sottile in :issue:`38312`.)
 
+Add :func:`curses.window.in_wch` function. (Contributed by Anthony Sottile in
+:issue:`39214`.)
+
 fcntl
 -----
 
